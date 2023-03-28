@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Page 2</title>
+	<style>
+		body {
+			background-color: lightgray;
+		}
+		h1 {
+			text-align: center;
+			color: darkblue;
+		}
+		form {
+			margin: 0 auto;
+			width: 500px;
+			text-align: center;
+		}
+		label {
+			display: block;
+			margin-bottom: 10px;
+		}
+		input[type="text"], textarea {
+			width: 100%;
+			padding: 10px;
+			box-sizing: border-box;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+			margin-bottom: 20px;
+			font-size: 16px;
+		}
+		.button {
+			display: inline-block;
+			padding: 10px 20px;
+			background-color: darkblue;
+			color: white;
+			font-size: 16px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			text-align: center;
+			text-decoration: none;
+			font-weight: bold;
+			box-shadow: 0px 0px 10px gray;
+		}
+	</style>
+</head>
+<body>
+	<h1>Welcome to CTO Code Demo</h1>
+	<form onsubmit="return submitForm(event)">
+		<label for="website">What do you want the website to do?</label>
+		<input type="text" id="website" name="website" required>
+
+		<label for="colors">What colors and font do you want to use?</label>
+		<input type="text" id="colors" name="colors" required>
+
+		<label for="login">Will there be a login?</label>
+		<input type="text" id="login" name="login" required>
+
+		<label for="payments">Will there be payments?</label>
+		<input type="text" id="payments" name="payments" required>
+
+		<button type="submit" class="button">Submit</button>
+	</form>
+
+	<p id="confirmation" style="display:none;">Thanks for submitting the form!</p>
+
+	<script>
+		function submitForm(event) {
+			event.preventDefault();
+
+			// Get the form values
+			const website = document.getElementById("website").value;
+			const colors = document.getElementById("colors").value;
+			const login = document.getElementById("login").value;
+			const payments = document.getElementById("payments").value;
+
+			// Write the form values to a file (replace this with your own server-side code)
+			// Here's a simple example using JavaScript's built-in File System API
+			const fileSystem = window.FileSystem || window.webkitFileSystem;
+			fileSystem.requestFileSystem(window.TEMPORARY, 1024*1024, function(fs) {
+				fs.root.getFile("form-data.txt", {create: true}, function(fileEntry) {
+					fileEntry.createWriter(function(fileWriter) {
+						const blob = new Blob([`Website: ${website}\nColors: ${colors}\nLogin: ${login}\nPayments: ${payments}`], {type: "text/plain"});
+						fileWriter.write(blob);
+
+						// Show the confirmation message
+						document.getElementById("confirmation").style.display = "block";
+					}, errorHandler);
+				}, errorHandler);
+			}, errorHandler);
+
+			return false;
+		}
+
+		function errorHandler(error) {
+			console.error("File system error:", error);
